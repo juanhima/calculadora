@@ -67,7 +67,7 @@ public class Calculadora implements EntryPoint {
 	private ContentPanel widget;
 	
 	final TextField resultado = new TextField();
-	final TextButton binario = new TextButton("binario");
+	final TextButton binario = new TextButton("BIN");
 	
 	final String[] idbotones = {"cero","uno","dos","tres","cuatro","cinco","seis","siete","ocho","nueve",
 		"masmenos","porcentaje","suma","resta","multiplicacion","division","coma","igual"};
@@ -106,10 +106,13 @@ public class Calculadora implements EntryPoint {
 		for (int x=0;x<idbotones.length;x++)
 		{
 			TextButton boton = new TextButton(txBotones[x]);
+			boton.setSize("50", "50");
+			
 			//Recoge el elemento con ese id (con get() recoge todo el body)
 			//RootPanel.get(idbotones[x]).add(boton);
 		    htmlLayoutContainer.add(boton,new HtmlData("." + idbotones[x]));
 		}
+		binario.setSize("50", "50");
 		htmlLayoutContainer.add(binario,new HtmlData(".binario"));
 		
 	    RootPanel.get("tablaCalc").add(widget);
