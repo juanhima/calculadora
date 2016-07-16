@@ -62,8 +62,6 @@ public class Calculadora implements EntryPoint {
 					calculaResultado();
 				else if (boton.getText().equals("+/-"))
 					cambioDeSigno();
-				else if (boton.getText().equals("C") || boton.getText().equals("CE"))
-					limpiarResultado();
 				else if (boton.getText().equals("+") || boton.getText().equals("-") || boton.getText().equals("*") || boton.getText().equals("/"))
 					acumularOperacion(boton);
 				else {
@@ -74,6 +72,8 @@ public class Calculadora implements EntryPoint {
 					else visor.setText(visor.getText()+boton.getText());
 				}
 				acumulador+= boton.getText();
+				if (boton.getText().equals("C") || boton.getText().equals("CE"))
+					limpiarResultado();
 			}
 
 			private void acumularOperacion(TextButton boton) {
