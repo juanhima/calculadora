@@ -1,0 +1,3 @@
+# Module calculadora
+# RPC service class, partial path of RPC policy file
+calculadora.client.Service, 6236C10C750F560261D8EE99F56C3450.gwt.rpc

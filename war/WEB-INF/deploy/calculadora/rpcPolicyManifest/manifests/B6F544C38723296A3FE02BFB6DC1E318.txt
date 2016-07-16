@@ -1,0 +1,2 @@
+serviceClass: calculadora.client.Service
+path: 6236C10C750F560261D8EE99F56C3450.gwt.rpc
