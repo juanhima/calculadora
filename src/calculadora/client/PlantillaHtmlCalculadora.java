@@ -4,12 +4,12 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.sencha.gxt.core.client.XTemplates;
 import com.sencha.gxt.core.client.XTemplates.XTemplate;
 
-public interface HtmlLayoutContainerTemplate extends XTemplates {
+public interface PlantillaHtmlCalculadora extends XTemplates {
     @XTemplate("<table id=\"tablaCalc\" align=\"center\">" +
   "<tr>" +
     "<td id=\"resultado\" colspan=\"3\" style=\"font-weight:bold;\" class=\"resultado\"></td>" +
-    "<td></td>" +
-    "<td></td>" +        
+    "<td id=\"c\" class=\"c\"></td>" +
+    "<td id=\"ce\" class=\"ce\"></td>" +
   "</tr>" +
   "<tr>" +
     "<td id=\"siete\" class=\"siete\"></td>" +
