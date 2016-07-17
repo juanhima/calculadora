@@ -1,10 +1,6 @@
 package calculadora.server;
 
 import calculadora.client.Service;
-import calculadora.client.ServiceAsync;
-import calculadora.shared.FieldVerifier;
-
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -15,8 +11,6 @@ public class ServiceImpl extends RemoteServiceServlet implements
 		Service {
 
 	public String calculaBinario(String input) throws IllegalArgumentException {
-		// Verify that the input is valid. 
-		String serverInfo = getServletContext().getServerInfo();
 		String userAgent = getThreadLocalRequest().getHeader("User-Agent");
 
 		// Escape data from the client to avoid cross-site script vulnerabilities.

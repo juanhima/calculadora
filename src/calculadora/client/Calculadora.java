@@ -234,12 +234,13 @@ public class Calculadora implements EntryPoint {
 							serverResponseLabel.setHTML(SERVER_ERROR);
 							dialogBox.center();
 							botonSalir.focus();
+							visor.setText("error en llamada");
 						}
 
 						public void onSuccess(String result) {
 							dialogBox.setTitle("Llamada a procedimiento remoto");
 							serverResponseLabel.removeStyleName("serverResponseLabelError");
-							visor.setText(result);
+							visor.setText("La llamada es ok");
 						}
 					});
 				}
