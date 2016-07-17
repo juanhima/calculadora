@@ -97,15 +97,15 @@ public class Calculadora implements EntryPoint {
 				if (!acumulador.isEmpty()){
 					for (int x=0; x<acumulador.length(); x++){
 						char digito = acumulador.charAt(x);
-						if ((digito >= '0' && digito <= '9') || digito == '.')
+						if ((digito >= '0' && digito <= '9') || digito == '.' || digito == 'n')
 						{
+							if (digito == 'n')
+								digito = '-';
 							if (operador.isEmpty())
-								opiz+=String.valueOf(digito);
-							else opdr+=String.valueOf(digito);
+								opiz+= String.valueOf(digito);
+							else opdr+= String.valueOf(digito);
 						}
-						else {
-							operador = String.valueOf(digito);
-						}
+						else operador = String.valueOf(digito);
 					}
 					if (!opiz.isEmpty() && !opdr.isEmpty() && !operador.isEmpty()){
 						float operando1 = Float.parseFloat(opiz);
@@ -125,9 +125,35 @@ public class Calculadora implements EntryPoint {
 			}
 
 			private void cambioDeSigno() {
-				int cambio = Integer.parseInt(visor.getText());
-				cambio = cambio*(-1);
-				visor.setText(Integer.toString(cambio));
+				String numeroActual = visor.getText();
+				int posicionOper = 0;
+				if (!numeroActual.isEmpty()){
+					if (acumulador.contains("+")){
+						posicionOper = acumulador.indexOf("+");
+					}
+					else if (acumulador.contains("-")){
+						posicionOper = acumulador.indexOf("-");
+					}
+					else if (acumulador.contains("*")){
+						posicionOper = acumulador.indexOf("*");
+					}
+					else if ( acumulador.contains("/")){
+						posicionOper = acumulador.indexOf("/");
+					}
+					float cambio = Float.parseFloat(numeroActual);
+					cambio = cambio*(-1);
+					
+					if (cambio < 0){//se marca como número negativo
+						
+						if (posicionOper > 0)
+							acumulador = acumulador.substring(0,posicionOper) + "n" + cambio*(-1);
+						else acumulador = "n" + acumulador;
+					}//Es numero positivo
+					else if (posicionOper >0) //se quita la marca de numero negativo si la tiene
+						acumulador = acumulador.substring(0,posicionOper) + cambio;
+					else acumulador = Float.toString(cambio);
+					visor.setText(Float.toString(cambio));
+				}
 			}
 		}
 		
@@ -140,7 +166,7 @@ public class Calculadora implements EntryPoint {
 	    widget.setHeading("CALCULADORA");
 	    widget.add(htmlLayoutContainer, new MarginData(10));
 	    
-		visor.setWidth(200);
+		visor.setWidth(150);
 		visor.setBorders(true);
 		visor.setReadOnly(true);
 		htmlLayoutContainer.add(visor);
@@ -219,9 +245,8 @@ public class Calculadora implements EntryPoint {
 				}
 			}
 		}
-		// Añadir un manejador para enviar el resultado al servidor
+		// Añadir el manejador para enviar el resultado al servidor
 		ManejadorBIN handler = new ManejadorBIN();
 		binario.addSelectHandler(handler);
-		//resultado.addKeyUpHandler(handler);
 	}
 }

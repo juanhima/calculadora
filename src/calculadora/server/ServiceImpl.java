@@ -1,7 +1,10 @@
 package calculadora.server;
 
 import calculadora.client.Service;
+import calculadora.client.ServiceAsync;
 import calculadora.shared.FieldVerifier;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -13,13 +16,6 @@ public class ServiceImpl extends RemoteServiceServlet implements
 
 	public String calculaBinario(String input) throws IllegalArgumentException {
 		// Verify that the input is valid. 
-		if (!FieldVerifier.isValidName(input)) {
-			// If the input is not valid, throw an IllegalArgumentException back to
-			// the client.
-			throw new IllegalArgumentException(
-					"Name must be at least 4 characters long");
-		}
-
 		String serverInfo = getServletContext().getServerInfo();
 		String userAgent = getThreadLocalRequest().getHeader("User-Agent");
 
@@ -27,8 +23,7 @@ public class ServiceImpl extends RemoteServiceServlet implements
 		input = escapeHtml(input);
 		userAgent = escapeHtml(userAgent);
 
-		return "Hola, " + input + "!<br><br>Estoy ejecutando " + serverInfo
-				+ ".<br><br>Parece que estás usando:<br>" + userAgent;
+		return "Hola, he recibido el número: " + input;
 	}
 
 	/**
