@@ -8,12 +8,12 @@
   <!-- Servlets -->
   <servlet>
     <servlet-name>greetServlet</servlet-name>
-    <servlet-class>calculadora.server.GreetingServiceImpl</servlet-class>
+    <servlet-class>calculadora.server.ServiceImpl</servlet-class>
   </servlet>
   
   <servlet-mapping>
     <servlet-name>greetServlet</servlet-name>
-    <url-pattern>/calculadora/greet</url-pattern>
+    <url-pattern>/calculadora/binario</url-pattern>
   </servlet-mapping>
   
   <!-- Default page to serve -->
