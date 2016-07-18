@@ -6,7 +6,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 /**
  * The client-side stub for the RPC service.
  */
-@RemoteServiceRelativePath("greet")
+@RemoteServiceRelativePath("binario")
 public interface Service extends RemoteService {
 	String calculaBinario(String name) throws IllegalArgumentException;
 }

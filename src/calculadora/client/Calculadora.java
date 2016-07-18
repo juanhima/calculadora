@@ -36,13 +36,6 @@ public class Calculadora implements EntryPoint {
 	private final String[] txBotones = {"0","1","2","3","4","5","6","7","8","9","C","CE","+/-","%","+","-","*","/",".","="};
 	
 	/**
-	 * Mensaje cuando no se conecta con el servidor
-	 */
-	private static final String SERVER_ERROR = "Ha ocurrido un error mientras "
-			+ "se intentaba contactar con el servidor. Por favor, compruebe su conexión "
-			+ "e inténtelo de nuevo";
-
-	/**
 	 * Creación de un servicio remoto para hablar con la parte servidor del servicio
 	 */
 	private final ServiceAsync service = GWT.create(Service.class);
@@ -58,22 +51,39 @@ public class Calculadora implements EntryPoint {
 			public void onSelect(SelectEvent event) {
 				Object obj = event.getSource();
 				TextButton boton = (TextButton) obj;
-				if (boton.getText().equals("="))
+				if (boton.getText().equals("=") || boton.getText().equals("%"))
 					calculaResultado();
 				else if (boton.getText().equals("+/-"))
 					cambioDeSigno();
-				else if (boton.getText().equals("+") || boton.getText().equals("-") || boton.getText().equals("*") || boton.getText().equals("/"))
+				else if (cadenaContieneOperador(boton.getText())){
 					acumularOperacion(boton);
+				}
 				else {
-					if (limpiarvisor){
-						visor.setText(boton.getText());
-						limpiarvisor = false;
-					}
-					else visor.setText(visor.getText()+boton.getText());
+						if (limpiarvisor){
+							visor.setText(boton.getText());
+							limpiarvisor = false;
+						}
+						else visor.setText(visor.getText()+boton.getText());
 				}
 				acumulador+= boton.getText();
-				if (boton.getText().equals("C") || boton.getText().equals("CE"))
+				if (boton.getText().equals("C"))
 					limpiarResultado();
+				if (boton.getText().equals("CE"))
+				{
+					if (cadenaContieneOperador(acumulador)){
+						int posoper = obtenerPosicionOperador(acumulador);
+						visor.setText("");
+						acumulador = acumulador.substring(0, posoper+1);
+					}
+					else limpiarResultado();
+				}
+				
+				if (boton.getText().equals("%")){
+					float result = Float.parseFloat(visor.getText());
+					result = result / 100;
+					visor.setText(Float.toString(result));
+					acumulador = Float.toString(result);
+				}
 			}
 
 			private void acumularOperacion(TextButton boton) {
@@ -128,18 +138,7 @@ public class Calculadora implements EntryPoint {
 				String numeroActual = visor.getText();
 				int posicionOper = 0;
 				if (!numeroActual.isEmpty()){
-					if (acumulador.contains("+")){
-						posicionOper = acumulador.indexOf("+");
-					}
-					else if (acumulador.contains("-")){
-						posicionOper = acumulador.indexOf("-");
-					}
-					else if (acumulador.contains("*")){
-						posicionOper = acumulador.indexOf("*");
-					}
-					else if ( acumulador.contains("/")){
-						posicionOper = acumulador.indexOf("/");
-					}
+					posicionOper = obtenerPosicionOperador(acumulador);
 					float cambio = Float.parseFloat(numeroActual);
 					cambio = cambio*(-1);
 					
@@ -154,6 +153,39 @@ public class Calculadora implements EntryPoint {
 					else acumulador = Float.toString(cambio);
 					visor.setText(Float.toString(cambio));
 				}
+			}
+			/**
+			 * Busca en la cadena si existe alguno de los operadores
+			 * @param cadena
+			 * @return verdadero o falso
+			 */
+			private boolean cadenaContieneOperador(String cadena){
+				boolean contiene = false;
+				if (cadena.contains("+") || cadena.contains("-") || cadena.contains("*") || cadena.contains("/"))
+					contiene = true;
+				return contiene;
+			}
+			/**
+			 * Busca en que posicion de la cadena esta el operador.
+			 * @param cadena
+			 * @return posicion del operador. 0 si no lo encuentra
+			 */
+			private int obtenerPosicionOperador(String cadena)
+			{
+				int posicionOper = 0;
+				if (acumulador.contains("+")){
+					posicionOper = acumulador.indexOf("+");
+				}
+				else if (acumulador.contains("-")){
+					posicionOper = acumulador.indexOf("-");
+				}
+				else if (acumulador.contains("*")){
+					posicionOper = acumulador.indexOf("*");
+				}
+				else if ( acumulador.contains("/")){
+					posicionOper = acumulador.indexOf("/");
+				}
+				return posicionOper;
 			}
 		}
 		
@@ -184,28 +216,6 @@ public class Calculadora implements EntryPoint {
 		htmlLayoutContainer.add(binario,new HtmlData(".binario"));
 		
 	    RootPanel.get("tablaCalc").add(widget);
-		// Se focaliza el cursor en resultado
-		visor.setSelectOnFocus(true);
-		
-		// Caja de dialogo para verificar la llamada al servidor
-		final Dialog dialogBox = new Dialog();
-		dialogBox.setTitle("Llamada a procedimiento remoto");
-		dialogBox.setDraggable(true);
-		final TextButton botonSalir = new TextButton("Cerrar");
-		
-		botonSalir.getElement().setId("botonCerrar");
-		final FieldLabel textToServerLabel = new FieldLabel();
-		final HTML serverResponseLabel = new HTML();
-		VerticalPanel dialogVPanel = new VerticalPanel();
-		dialogVPanel.addStyleName("dialogVPanel");
-		dialogVPanel.add(new HTML("<b>Enviando datos al servidor:</b>"));
-		dialogVPanel.add(textToServerLabel);
-		dialogVPanel.add(new HTML("<br><b>Respuesta servidor:</b>"));
-		dialogVPanel.add(serverResponseLabel);
-		dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
-		dialogVPanel.add(botonSalir);
-		dialogBox.setWidget(dialogVPanel);
-
 				
 		// Crear un manejador para el envio al servidor al pulsar la tecla BIN 
 		class ManejadorBIN implements SelectHandler {
@@ -225,22 +235,13 @@ public class Calculadora implements EntryPoint {
 				String textToServer = visor.getText();
 
 				if (!textToServer.isEmpty()){
-					textToServerLabel.setText(textToServer);
-					serverResponseLabel.setText("");
 					service.calculaBinario(textToServer, new AsyncCallback<String>() {
 						public void onFailure(Throwable caught) {
-							dialogBox.setTitle("Llamada a procedimiento - Erronea");
-							serverResponseLabel.addStyleName("serverResponseLabelError");
-							serverResponseLabel.setHTML(SERVER_ERROR);
-							dialogBox.center();
-							botonSalir.focus();
-							visor.setText("error en llamada");
+							visor.setText("Error en llamada al servidor");
 						}
 
-						public void onSuccess(String result) {
-							dialogBox.setTitle("Llamada a procedimiento remoto");
-							serverResponseLabel.removeStyleName("serverResponseLabelError");
-							visor.setText("La llamada es ok");
+						public void onSuccess(String resultado) {
+							visor.setText(resultado);
 						}
 					});
 				}
