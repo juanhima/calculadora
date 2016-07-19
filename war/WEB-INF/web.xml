@@ -16,6 +16,11 @@
     <url-pattern>/calculadora/binario</url-pattern>
   </servlet-mapping>
   
+  <servlet-mapping>
+    <servlet-name>greetServlet</servlet-name>
+    <url-pattern>/calculadora/consulta</url-pattern>
+  </servlet-mapping>
+  
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>Calculadora.html</welcome-file>

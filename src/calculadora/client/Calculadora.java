@@ -3,18 +3,13 @@ package calculadora.client;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.sencha.gxt.widget.core.client.ContentPanel;
-import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.HtmlLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.MarginData;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
-import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.container.AbstractHtmlLayoutContainer.HtmlData;
 
@@ -31,15 +26,16 @@ public class Calculadora implements EntryPoint {
 	private boolean limpiarvisor = false;
 	private final TextButton binario = new TextButton("BIN");
 	
+	
 	private final String[] idbotones = {"cero","uno","dos","tres","cuatro","cinco","seis","siete","ocho","nueve",
 		"c","ce","masmenos","porcentaje","suma","resta","multiplicacion","division","coma","igual"};
 	private final String[] txBotones = {"0","1","2","3","4","5","6","7","8","9","C","CE","+/-","%","+","-","*","/",".","="};
 	
 	/**
-	 * Creación de un servicio remoto para hablar con la parte servidor del servicio
+	 * Creación de servicios remotos para hablar con la parte servidor del servicio
 	 */
-	private final ServiceAsync service = GWT.create(Service.class);
-
+	private final convertBinarioServiceAsync service = GWT.create(convertBinarioService.class);
+	private final ListaBinariosServiceAsync service2 = GWT.create(ListaBinariosService.class);
 	/**
 	 * Punto de entrada a la aplicación
 	 */
@@ -189,8 +185,7 @@ public class Calculadora implements EntryPoint {
 			}
 		}
 		
-		final Label errorLabel = new Label();
-
+		final TextButton btConsulta = new TextButton("Consultar Binarios");
 		PlantillaHtmlCalculadora templates = GWT.create(PlantillaHtmlCalculadora.class);
 	    HtmlLayoutContainer htmlLayoutContainer = new HtmlLayoutContainer(templates.getTemplate());
 		widget = new ContentPanel();
@@ -216,6 +211,7 @@ public class Calculadora implements EntryPoint {
 		htmlLayoutContainer.add(binario,new HtmlData(".binario"));
 		
 	    RootPanel.get("tablaCalc").add(widget);
+	    RootPanel.get("btConsulta").add(btConsulta);
 				
 		// Crear un manejador para el envio al servidor al pulsar la tecla BIN 
 		class ManejadorBIN implements SelectHandler {
@@ -231,7 +227,6 @@ public class Calculadora implements EntryPoint {
 			 * Enviar el contenido de RESULTADO y esperar respuesta del servidor
 			 */
 			private void sendResultadoToServer() {
-				errorLabel.setText("");
 				String textToServer = visor.getText();
 
 				if (!textToServer.isEmpty()){
@@ -247,8 +242,32 @@ public class Calculadora implements EntryPoint {
 				}
 			}
 		}
-		// Añadir el manejador para enviar el resultado al servidor
+		// Añadir el manejador al boton BIN para enviar el resultado al servidor
 		ManejadorBIN handler = new ManejadorBIN();
 		binario.addSelectHandler(handler);
+		
+		class ManejadorConsulta implements SelectHandler{
+			// Salta cuando el usuario pulsa en boton consultar
+			@Override
+			public void onSelect(SelectEvent event) {
+				consultarBinarios();
+			}
+
+			private void consultarBinarios() {
+				service2.obtenerListaBinarios(new AsyncCallback<String>() {
+					public void onFailure(Throwable caught) {
+						visor.setText("Error en llamada al servidor");
+					}
+
+					public void onSuccess(String resultado) {
+						com.google.gwt.user.client.Window.alert(resultado);
+					}
+				});
+			}
+			
+		}
+		// Añadir el manejador al boton consulta
+		ManejadorConsulta mc = new ManejadorConsulta();
+		btConsulta.addSelectHandler(mc);
 	}
 }

@@ -1,3 +1,4 @@
 # Module calculadora
 # RPC service class, partial path of RPC policy file
-calculadora.client.Service, 6236C10C750F560261D8EE99F56C3450.gwt.rpc
+calculadora.client.ListaBinariosService, 465EBF8D9E15D4AB18E007118A36B82E.gwt.rpc
+calculadora.client.convertBinarioService, 435FF9D42ACEEC4D3D5687EB5E9139C4.gwt.rpc
