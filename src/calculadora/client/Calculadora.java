@@ -34,7 +34,7 @@ public class Calculadora implements EntryPoint {
 	/**
 	 * Creación de servicios remotos para hablar con la parte servidor del servicio
 	 */
-	private final convertBinarioServiceAsync service = GWT.create(convertBinarioService.class);
+	private final ConvertBinarioServiceAsync service = GWT.create(ConvertBinarioService.class);
 	private final ListaBinariosServiceAsync service2 = GWT.create(ListaBinariosService.class);
 	/**
 	 * Punto de entrada a la aplicación
@@ -81,19 +81,28 @@ public class Calculadora implements EntryPoint {
 					acumulador = Float.toString(result);
 				}
 			}
-
+			/**
+			 * Realiza la acumulación de la operación en la cadena.
+			 * Se realiza cuando se elige el segundo operando
+			 * @param boton
+			 */
 			private void acumularOperacion(TextButton boton) {
 				acumulador+= boton.getText();
 				limpiarvisor = true;
 			}
-
+			/**
+			 * Limpia tanto la operación acumulada como el visor.
+			 * Normalmente actúa al puslar la tecla C ó CE si solo hay un operando
+			 */
 			private void limpiarResultado() {
 				visor.setText("");
 				resultado = 0;
 				acumulador = "";
 				limpiarvisor = false;
 			}
-
+			/**
+			 * Realiza los cálculos de la cadena acumulada según el signo que contiene
+			 */
 			private void calculaResultado() {
 				
 				String opiz = "";
@@ -129,7 +138,10 @@ public class Calculadora implements EntryPoint {
 					}
 				}
 			}
-
+			/**
+			 * Cambia de signo el número mostrado en el visor, 
+			 * a positivo (sin signo) o negativo según el caso.
+			 */
 			private void cambioDeSigno() {
 				String numeroActual = visor.getText();
 				int posicionOper = 0;
@@ -141,7 +153,7 @@ public class Calculadora implements EntryPoint {
 					if (cambio < 0){//se marca como número negativo
 						
 						if (posicionOper > 0)
-							acumulador = acumulador.substring(0,posicionOper) + "n" + cambio*(-1);
+							acumulador = acumulador.substring(0,posicionOper+1) + "n" + cambio*(-1);
 						else acumulador = "n" + acumulador;
 					}//Es numero positivo
 					else if (posicionOper >0) //se quita la marca de numero negativo si la tiene

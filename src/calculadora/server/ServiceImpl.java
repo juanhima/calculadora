@@ -2,7 +2,7 @@ package calculadora.server;
 
 import java.util.List;
 
-import calculadora.client.convertBinarioService;
+import calculadora.client.ConvertBinarioService;
 import calculadora.client.ListaBinariosService;
 import calculadora.persistence.NumeroBinario;
 import calculadora.persistence.NumeroBinarioUtils;
@@ -13,7 +13,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
  * The server-side implementation of the RPC service.
  */
 @SuppressWarnings("serial")
-public class ServiceImpl extends RemoteServiceServlet implements convertBinarioService, ListaBinariosService {
+public class ServiceImpl extends RemoteServiceServlet implements ConvertBinarioService, ListaBinariosService {
 
 	public String calculaBinario(String input) throws IllegalArgumentException {
 		return convertirDecimalABinario(input);
